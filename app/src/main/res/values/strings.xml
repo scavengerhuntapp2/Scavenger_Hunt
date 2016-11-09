@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Scavenger Hunt</string>
+    <string name="please_sign_in">Please Sign In</string>
 </resources>
