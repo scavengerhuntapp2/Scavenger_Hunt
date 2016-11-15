@@ -57,7 +57,7 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
         //two steps. User signs in with google and then exchange google token for firebase token
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        //use google sign in to request the user data required by this app. Lets request basic data, the defaul
+        //use google sign in to request the user data required by this app. Lets request basic data, the default
         //plus the user's email, although we are not going to use it here
         //if the other info was needed, you's chain on methods like requestProfile() before building
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -138,7 +138,7 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
     }
 
     //this deals with the user signing into their google account. this checks for the success or failure
-    //if success, credentials will be returned, that can be used to sign into Fribase on the user's behalf
+    //if success, credentials will be returned, that can be used to sign into Firebase on the user's behalf
     private void handleSignIn(GoogleSignInResult result) {
         Log.d(TAG, "handleSignIn for result " + result.getSignInAccount());
         if(result.isSuccess()) {
@@ -148,19 +148,19 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
             firebaseAuthWithGoogleCreds(account);
         } else {
             Log.e(TAG, "Google sign in failed");
-            //this will fail if user has no internest connection or you havent enabled google auth in firebase console.
+            //this will fail if user has no internet connection or you haven't enabled google auth in firebase console.
             //and probably other reasons too. Check the log for the error message.
             Toast.makeText(this, "Google sign in failed", Toast.LENGTH_LONG).show();
         }
     }
 
-    //this useds the credentials returned from a successful sign in to a google account to authenticate to Firebase
-    //notice that this method doesnt do anything else with the results of auth - thats handled by an AuthStateListener
+    //this uses the credentials returned from a successful sign in to a google account to authenticate to Firebase
+    //notice that this method doesn't do anything else with the results of auth - that's handled by an AuthStateListener
     private void firebaseAuthWithGoogleCreds(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         Log.d(TAG, "firebase auth attempt with creds " + credential);
 
-        //attempt to sign in to firebase with the google credentials. the onCopleteListener is used for logging success
+        //attempt to sign in to firebase with the google credentials. the onCompleteListener is used for logging success
         mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
