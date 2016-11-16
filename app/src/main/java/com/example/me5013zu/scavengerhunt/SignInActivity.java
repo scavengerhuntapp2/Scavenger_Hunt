@@ -91,35 +91,6 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
         }
     }
 
-    //method is called if user signs in or signs out. it is also called when the app is launched
-    //so if the user has already authenticated, and their session has not timed out, they will not be
-    //prompted to authenticate again. Instead, this will launch MainActivity or AdminMainActivity depending on authentication of admin or user
-    private void authStateChanged(FirebaseUser user) {
-        if (user == null) {
-            Log.d(TAG, "user is signed out");
-        } else {
-            Log.d(TAG, "user is signed in");
-
-            //save the user id in shared prefs
-            Log.d(TAG, "The user id is = " + user.getUid() + " " + user.toString());
-
-            SharedPreferences.Editor prefEditor = getSharedPreferences(USERS_PREFS, MODE_PRIVATE).edit();
-            prefEditor.putString(FIREBASE_USER_ID_PREF_KEY, user.getUid());
-            prefEditor.apply();
-
-            //then boot up the app by starting the MainActivity/AdminMainActivity
-            if(user.getEmail() == Admin) {
-                Intent startAdminMainActivity = new Intent(this, MainActivity.class);
-                startActivity(startAdminMainActivity);
-            } else {
-                Intent startGame = new Intent(this, Game.class);
-                startActivity(startGame);
-            }
-
-            }
-
-        }
-
     //this launches an activity where the user can sign into their google account, or even create a new account
     public void signIn() {
         Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -187,6 +158,35 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
     public void onStop() {
         super.onStop();
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
+
+    //method is called if user signs in or signs out. it is also called when the app is launched
+    //so if the user has already authenticated, and their session has not timed out, they will not be
+    //prompted to authenticate again. Instead, this will launch MainActivity or AdminMainActivity depending on authentication of admin or user
+    private void authStateChanged(FirebaseUser user) {
+        if (user == null) {
+            Log.d(TAG, "user is signed out");
+        } else {
+            Log.d(TAG, "user is signed in");
+
+            //save the user id in shared prefs
+            Log.d(TAG, "The user id is = " + user.getUid() + " " + user.toString());
+
+            SharedPreferences.Editor prefEditor = getSharedPreferences(USERS_PREFS, MODE_PRIVATE).edit();
+            prefEditor.putString(FIREBASE_USER_ID_PREF_KEY, user.getUid());
+            prefEditor.apply();
+
+            //then boot up the app by starting the MainActivity/AdminMainActivity
+            if (user.getEmail().equals(Admin)) {
+                Intent startAdminMainActivity = new Intent(this, MainActivity.class);
+                startActivity(startAdminMainActivity);
+            } else {
+                Intent startGameActivity = new Intent(this, Game.class);
+                startActivity(startGameActivity);
+            }
+
+
+        }
     }
 
     @Override
