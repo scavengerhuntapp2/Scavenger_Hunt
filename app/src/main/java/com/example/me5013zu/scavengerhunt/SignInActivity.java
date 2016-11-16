@@ -57,7 +57,7 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
         //two steps. User signs in with google and then exchange google token for firebase token
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        //use google sign in to request the user data required by this app. Lets request basic data, the defaul
+        //use google sign in to request the user data required by this app. Lets request basic data, the default
         //plus the user's email, although we are not going to use it here
         //if the other info was needed, you's chain on methods like requestProfile() before building
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -91,35 +91,6 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
         }
     }
 
-    //method is called if user signs in or signs out. it is also called when the app is launched
-    //so if the user has already authenticated, and their session has not timed out, they will not be
-    //prompted to authenticate again. Instead, this will launch MainActivity or AdminMainActivity depending on authentication of admin or user
-    private void authStateChanged(FirebaseUser user) {
-        if (user == null) {
-            Log.d(TAG, "user is signed out");
-        } else {
-            Log.d(TAG, "user is signed in");
-
-            //save the user id in shared prefs
-            Log.d(TAG, "The user id is = " + user.getUid() + " " + user.toString());
-
-            SharedPreferences.Editor prefEditor = getSharedPreferences(USERS_PREFS, MODE_PRIVATE).edit();
-            prefEditor.putString(FIREBASE_USER_ID_PREF_KEY, user.getUid());
-            prefEditor.apply();
-
-            //then boot up the app by starting the MainActivity/AdminMainActivity
-            if(user.getEmail() == Admin) {
-                Intent startAdminMainActivity = new Intent(this, MainActivity.class);
-                startActivity(startAdminMainActivity);
-            } else {
-                Intent startGame = new Intent(this, Game.class);
-                startActivity(startGame);
-            }
-
-            }
-
-        }
-
     //this launches an activity where the user can sign into their google account, or even create a new account
     public void signIn() {
         Intent SignInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -138,7 +109,7 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
     }
 
     //this deals with the user signing into their google account. this checks for the success or failure
-    //if success, credentials will be returned, that can be used to sign into Fribase on the user's behalf
+    //if success, credentials will be returned, that can be used to sign into Firebase on the user's behalf
     private void handleSignIn(GoogleSignInResult result) {
         Log.d(TAG, "handleSignIn for result " + result.getSignInAccount());
         if(result.isSuccess()) {
@@ -148,19 +119,19 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
             firebaseAuthWithGoogleCreds(account);
         } else {
             Log.e(TAG, "Google sign in failed");
-            //this will fail if user has no internest connection or you havent enabled google auth in firebase console.
+            //this will fail if user has no internet connection or you haven't enabled google auth in firebase console.
             //and probably other reasons too. Check the log for the error message.
             Toast.makeText(this, "Google sign in failed", Toast.LENGTH_LONG).show();
         }
     }
 
-    //this useds the credentials returned from a successful sign in to a google account to authenticate to Firebase
-    //notice that this method doesnt do anything else with the results of auth - thats handled by an AuthStateListener
+    //this uses the credentials returned from a successful sign in to a google account to authenticate to Firebase
+    //notice that this method doesn't do anything else with the results of auth - that's handled by an AuthStateListener
     private void firebaseAuthWithGoogleCreds(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         Log.d(TAG, "firebase auth attempt with creds " + credential);
 
-        //attempt to sign in to firebase with the google credentials. the onCopleteListener is used for logging success
+        //attempt to sign in to firebase with the google credentials. the onCompleteListener is used for logging success
         mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -187,6 +158,35 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
     public void onStop() {
         super.onStop();
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
+
+    //method is called if user signs in or signs out. it is also called when the app is launched
+    //so if the user has already authenticated, and their session has not timed out, they will not be
+    //prompted to authenticate again. Instead, this will launch MainActivity or AdminMainActivity depending on authentication of admin or user
+    private void authStateChanged(FirebaseUser user) {
+        if (user == null) {
+            Log.d(TAG, "user is signed out");
+        } else {
+            Log.d(TAG, "user is signed in");
+
+            //save the user id in shared prefs
+            Log.d(TAG, "The user id is = " + user.getUid() + " " + user.toString());
+
+            SharedPreferences.Editor prefEditor = getSharedPreferences(USERS_PREFS, MODE_PRIVATE).edit();
+            prefEditor.putString(FIREBASE_USER_ID_PREF_KEY, user.getUid());
+            prefEditor.apply();
+
+            //then boot up the app by starting the MainActivity/AdminMainActivity
+            if (user.getEmail().equals(Admin)) {
+                Intent startAdminMainActivity = new Intent(this, MainActivity.class);
+                startActivity(startAdminMainActivity);
+            } else {
+                Intent startGameActivity = new Intent(this, Game.class);
+                startActivity(startGameActivity);
+            }
+
+
+        }
     }
 
     @Override
