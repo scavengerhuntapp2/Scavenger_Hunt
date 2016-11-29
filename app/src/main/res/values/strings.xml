@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Scavenger Hunt</string>
     <string name="please_sign_in">Please sign in to start hunting.</string>
+    <string name="game_name">Scavenger Hunt 1</string>
+
+    <string name="item_one">Item 1</string>
+    <string name="item_two">Item 2</string>
+    <string name="item_three">Item 3</string>
+
+    <string name="sign_out">Sign Out</string>
+    <string name="description">description</string>
 </resources>

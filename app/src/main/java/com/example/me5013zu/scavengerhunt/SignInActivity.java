@@ -178,10 +178,10 @@ public class SignInActivity extends FragmentActivity implements GoogleApiClient.
 
             //then boot up the app by starting the MainActivity/AdminMainActivity
             if (user.getEmail().equals(Admin)) {
-                Intent startAdminMainActivity = new Intent(this, MainActivity.class);
+                Intent startAdminMainActivity = new Intent(this, Game.class);
                 startActivity(startAdminMainActivity);
-            } else {
-                Intent startGameActivity = new Intent(this, Game.class);
+            } else if (user.getEmail() != Admin){
+                Intent startGameActivity = new Intent(SignInActivity.this, Game.class);
                 startActivity(startGameActivity);
             }
 
